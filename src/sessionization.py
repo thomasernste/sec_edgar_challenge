@@ -60,8 +60,3 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
     with open(output_data_csv, 'w') as myfile:
         wr = csv.writer(myfile)
         wr.writerow(result)
-
-sec_edgar_data = parse_sec_edgar_data('../input/log.csv', '../input/inactivity_period.txt',
-                                         '../output/sessionization.txt')
-
-print(sec_edgar_data)
