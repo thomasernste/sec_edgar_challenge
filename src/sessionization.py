@@ -56,7 +56,7 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
             # Skips here if there is not another previous request by this user within the time in the
             # inactivity value table, so it creates a temporary list t with the data for this visit
             t = dct[user]
-            # Appends the t list from above to the final list
+            # Appends parts of the t list from above to the final list
             final.append([user, t[0], t[-1], (t[-1] - t[0] + 1), len(t)])
 
         # Overwrites user in the dct with new data
@@ -68,13 +68,18 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
         b = [[k, v[0], v[-1], (v[-1] - v[0] + 1), len(v)] for k, v in
              dct.items()]
 
-    # header = [["ip", "start_time", "end_time", "duration", "count"]]
+        # header = [["ip", "start_time", "end_time", "duration", "count"]]
 
-    # Combines the 'final' list that contains visits such as ip address where the user visited the
-    # site and then made at least one more visit after the inactivity value expires. The code appends the early
-    # visits by such a user before clearing the dictionary for the follow-up visit by the user after the
-    # inactivity expiration time.
-    final = sorted(final + b, key=lambda x: x[1:3])
+    # Combines the 'final' list that contains only the visits in which the ip address visited the
+    # site and then made at least one more follow-up visit only after the inactivity value expired.
+    # The code appends the early visits by such a user before clearing the dictionary for the follow-up
+    # visit by the user after the inactivity expiration time.
+
+    def final_sort(x):
+
+        return x[1:3]
+
+    final = sorted(final + b, key=final_sort)
 
     # Because I iterated through users rather than  by seconds, the rows in the 2D 'final' array at this
     # time are not sorted properly. The conditional_sort function sorts first in descending order by the
