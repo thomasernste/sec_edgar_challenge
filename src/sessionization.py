@@ -65,21 +65,19 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
         # Parses the rest of the dct here, appending each dictionary key and value to the list that have
         # not already been appended to the list
         # Also, the formula at index 3 in the list is the calculation that produces the duration column.
-        b = [[k, v[0], v[-1], (v[-1] - v[0] + 1), len(v)] for k, v in
+        dct_keys = [[k, v[0], v[-1], (v[-1] - v[0] + 1), len(v)] for k, v in
              dct.items()]
 
         # header = [["ip", "start_time", "end_time", "duration", "count"]]
 
-    # Combines the 'final' list that contains only the visits in which the ip address visited the
-    # site and then made at least one more follow-up visit only after the inactivity value expired.
-    # The code appends the early visits by such a user before clearing the dictionary for the follow-up
-    # visit by the user after the inactivity expiration time.
+    # The 'final' list contains only the visits in which the ip address visited the
+    # site and then made at least one more follow-up visit only after the inactivity value expired. The
+    # dct_keys list is all other users who either made multiple requests chained together within the
+    # inactivity period or the last request by any user with a previous unique visit already contained
+    # in the final list.
 
-    def final_sort(x):
+    final = dct_keys + final
 
-        return x[1:3]
-
-    final = sorted(final + b, key=final_sort)
 
     # Because I iterated through users rather than  by seconds, the rows in the 2D 'final' array at this
     # time are not sorted properly. The conditional_sort function sorts first in descending order by the
@@ -94,6 +92,8 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
         end = 2
 
         if ip1[start] - ip2[start] >= inactivity_value:
+            return ip1[start] - ip2[start]
+        elif ip1[end] - ip2[end] == 0:
             return ip1[start] - ip2[start]
 
         else:
