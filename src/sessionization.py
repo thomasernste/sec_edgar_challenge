@@ -19,10 +19,9 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
             inactivity_value = int(row[0])
 
 
-
     # Preserve only the columns I need from the input data array to complete the data engineering challenge
     # Also, add together the date and time columns to create one date_time column, then delete the date and time columns.
-    for row in sec_input:
+    for row in sec_input[1:]:
         row.insert(1, row[1] + '_' + row[2])
         del row[2:]
 
@@ -30,10 +29,6 @@ def parse_sec_edgar_data(input_data_csv, inactivity_period_file, output_data_csv
     for row in sec_input[1:]:
         row[1] = datetime.datetime.strptime(row[1], '%Y-%m-%d_%H:%M:%S')
         row[1] = str(int(time.mktime(row[1].timetuple())))
-
-    # sec_input = [['user', 'time', 'address'], ['F', '0', 'a'], ['T', '0', 'b'], ['T', '0', 'c'], ['T', '1', 'd'],
-    #         ['B', '1', 'e'], ['K', '2', 'f'], ['J', '2', 'g'], ['T', '3', 'h'], ['J', '4', 'i'], ['B', '4', 'j'],
-    #         ['B', '5', 'k']]
 
 
     #initialize dictionary
